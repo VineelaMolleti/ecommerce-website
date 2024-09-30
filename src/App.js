@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ProductList from './components/productList';
+import Cart from './components/cart';
+import Navbar from './components/navbar';
 
 function App() {
+  const [cartItems, setCartItems] = useState([]);
+
+  // Add product to the cart if it's not already there
+  const addToCart = (product) => {
+    const exist = cartItems.find((item) => item.id === product.id);
+    if (exist) {
+      alert('Product is already in the cart!');
+    } else {
+      setCartItems([...cartItems, product]);
+    }
+  };
+
+  // Remove product from the cart
+  const removeFromCart = (product) => {
+    setCartItems(cartItems.filter((item) => item.id !== product.id));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar cartItems={cartItems} />
+      <Routes>
+        <Route
+          path="/"
+          element={<ProductList addToCart={addToCart} />}
+        />
+        <Route
+          path="/cart"
+          element={<Cart cartItems={cartItems} removeFromCart={removeFromCart} />}
+        />
+      </Routes>
+    </Router>
   );
 }
 
